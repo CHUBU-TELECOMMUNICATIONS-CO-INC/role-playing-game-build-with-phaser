@@ -16,14 +16,7 @@ export class EndingScene extends Phaser.Scene {
             color: '#ffffff'
         };
 
-        const link_style: Phaser.Types.GameObjects.Text.TextStyle = {
-            fontFamily: 'Meiryo, sans-serif',
-            fontSize: '24px',
-            color: '#646cff'
-        };
-
         // 終了メッセージを中央上に表示
-        this.add.text(width / 2, height / 2 - 80, 'ロールプレイングが終了しました', text_style).setOrigin(0.5);
-
+        this.add.text(width / 2, height / 2 - 80, 'ロールプレイングが終了しました\nお疲れ様でした', text_style).setOrigin(0.5);
     }
 }
