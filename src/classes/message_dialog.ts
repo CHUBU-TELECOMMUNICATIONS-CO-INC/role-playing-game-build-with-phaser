@@ -58,6 +58,7 @@ export class MessageDialog extends Phaser.GameObjects.Container {
         this.text.setVisible(true);
     }
 
+    // 会話テキストのクリア（非表示）
     public clearText() {
         this.box.setVisible(false);
         this.text.setVisible(false);
@@ -89,6 +90,10 @@ export class MessageDialog extends Phaser.GameObjects.Container {
         this.actor_name_box.setVisible(false);
         this.actor_name_text.setVisible(false);
     }
+    // テキストボックスの背景色を変更するメソッド
+    public setActorBoxFillColor(color: string = "#000000", alpha: number = 1.0) {
+        this.actor_name_box.setFillStyle(Phaser.Display.Color.HexStringToColor(color).color, alpha);
+    }
 
     // MessageDialogクラスに追加するメソッド
     public setTextWithTypingEffect(text: string, delay: number = 100): Phaser.Time.TimerEvent {
@@ -115,5 +120,10 @@ export class MessageDialog extends Phaser.GameObjects.Container {
         });
 
         return timer;  // タイマーを返す
+    }
+
+    // テキストボックスの背景色を変更するメソッド
+    public setTextBoxFillColor(color: string = "#000000", alpha: number = 1.0) {
+        this.box.setFillStyle(Phaser.Display.Color.HexStringToColor(color).color, alpha);
     }
 }

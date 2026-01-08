@@ -13,8 +13,24 @@ export const senarioData: Timelines = {
     start: [
         { event: EventTypeEnum.ClearForeground },
         { event: EventTypeEnum.ClearBackground },
-        { event: EventTypeEnum.SetDialog, text: 'シナリオサンプルを始めます' },
-        { event: EventTypeEnum.SetDialog, text: 'どこから始めますか？' },
+        {
+            event: EventTypeEnum.SetDialog,
+            text: 'シナリオサンプルを始めます',
+            actorName: 'システム',
+            textFillColor: '#0000ff',
+            textFillAlpha: 0.5,
+            actorFillColor: '#0000ff',
+            actorFillAlpha: 0.5
+        },
+        {
+            event: EventTypeEnum.SetDialog,
+            text: 'どこから始めますか？',
+            actorName: 'システム',
+            textFillColor: '#0000ff',
+            textFillAlpha: 0.5,
+            actorFillColor: '#0000ff',
+            actorFillAlpha: 0.5
+        },
         {
             event: EventTypeEnum.Choice, choices: [
                 { text: 'unit01へ', key: 'unit01' },
@@ -57,8 +73,24 @@ export const senarioData: Timelines = {
         { event: EventTypeEnum.TimelineTransition, key: 'ending' },
     ],
     test_correct: [
-        { event: EventTypeEnum.SetDialog, text: '正解です！' },
-        { event: EventTypeEnum.SetDialog, text: '以上でテストは終了です\n終了しますか？' },
+        {
+            event: EventTypeEnum.SetDialog,
+            text: '正解です！',
+            actorName: 'システム',
+            textFillColor: '#008000',
+            textFillAlpha: 0.5,
+            actorFillColor: '#0000ff',
+            actorFillAlpha: 0.5
+        },
+        {
+            event: EventTypeEnum.SetDialog,
+            text: '以上でテストは終了です\n終了しますか？',
+            actorName: 'システム',
+            textFillColor: '#0000ff',
+            textFillAlpha: 0.5,
+            actorFillColor: '#0000ff',
+            actorFillAlpha: 0.5
+        },
         {
             event: EventTypeEnum.Choice, choices: [
                 { text: 'はい(終了)', key: 'ending' },
@@ -67,8 +99,24 @@ export const senarioData: Timelines = {
         }
     ],
     test_incorrect: [
-        { event: EventTypeEnum.SetDialog, text: '残念、不正解です' },
-        { event: EventTypeEnum.SetDialog, text: '再度テストに挑みますか？' },
+        {
+            event: EventTypeEnum.SetDialog,
+            text: '残念、不正解です',
+            actorName: 'システム',
+            textFillColor: '#ff0000',
+            textFillAlpha: 0.5,
+            actorFillColor: '#0000ff',
+            actorFillAlpha: 0.5
+        },
+        {
+            event: EventTypeEnum.SetDialog,
+            text: '再度テストに挑みますか？',
+            actorName: 'システム',
+            textFillColor: '#0000ff',
+            textFillAlpha: 0.5,
+            actorFillColor: '#0000ff',
+            actorFillAlpha: 0.5
+        },
         {
             event: EventTypeEnum.Choice, choices: [
                 { text: 'はい(もう一度テスト)', key: 'test' },

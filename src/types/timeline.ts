@@ -19,7 +19,11 @@ export enum EventTypeEnum {
 type SetDialogEvent = {
     event: EventTypeEnum.SetDialog,
     text: string,
-    actor_name?: string
+    textFillColor?: string,
+    textFillAlpha?: number,
+    actorName?: string,
+    actorFillColor?: string,
+    actorFillAlpha?: number,
 };
 
 // ダイアログ非表示イベント

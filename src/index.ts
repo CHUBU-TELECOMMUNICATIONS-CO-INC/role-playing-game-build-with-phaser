@@ -4,8 +4,8 @@ import { scenes } from './scene/index';
 
 const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,  // webGLを使うかcanvasを使うかをphaserが自動で判断してくれる
-    width: 960,
-    height: 800,
+    width: 1024,
+    height: 700,
     parent: 'game-app',  // #game-app内にcanvasを生成
     scene: scenes,
     physics: {

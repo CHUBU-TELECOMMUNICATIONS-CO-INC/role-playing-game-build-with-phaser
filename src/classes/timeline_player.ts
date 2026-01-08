@@ -351,15 +351,44 @@ export class TimelinePlayer {
         // タイムラインのイベントを取得してから、timelineIndexをインクリメント
         const timeline_event = this.timeline[this.timeline_index++];
 
+        let color: string;
+        let alpha: number;
         switch (timeline_event.event) {
             case EventTypeEnum.SetDialog:  // ダイアログイベント
-                if (timeline_event.actor_name) {
+                // initialize actor box fill color
+                color = "#000000"
+                alpha = 1.0
+                if (timeline_event.actorFillColor !== undefined && timeline_event.actorFillColor.startsWith('#')) {
+                    // actorFillColorが設定されていたら名前背景の色を変更
+                    color = timeline_event.actorFillColor;
+                }
+                if (timeline_event.actorFillAlpha !== undefined && typeof timeline_event.actorFillAlpha === 'number') {
+                    // actorFillAlphaが設定されていたら名前背景の透明度を変更
+                    alpha = timeline_event.actorFillAlpha;
+                }
+                this.message_dialog.setActorBoxFillColor(color, alpha);
+
+                if (timeline_event.actorName) {
                     // actorNameが設定されていたら名前を表示
-                    this.message_dialog.setActorNameText(timeline_event.actor_name);
+                    this.message_dialog.setActorNameText(timeline_event.actorName);
                 } else {
                     // actorNameが設定されていなかったら名前を非表示
                     this.message_dialog.clearActorNameText();
                 }
+
+                // initialize text box fill color
+                color = "#000000"
+                alpha = 1.0
+                if (timeline_event.textFillColor !== undefined && timeline_event.textFillColor.startsWith('#')) {
+                    // textFillColorが設定されていたら名前背景の色を変更
+                    color = timeline_event.textFillColor;
+                }
+                if (timeline_event.textFillAlpha !== undefined && typeof timeline_event.textFillAlpha === 'number') {
+                    // textFillAlphaが設定されていたら名前背景の透明度を変更
+                    alpha = timeline_event.textFillAlpha;
+                }
+                this.message_dialog.setTextBoxFillColor(color, alpha);
+
                 // タイピングエフェクトを開始し、タイマーを保存
                 this.typing_timer = this.message_dialog.setTextWithTypingEffect(timeline_event.text, 50);
                 break;
