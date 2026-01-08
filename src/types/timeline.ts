@@ -11,6 +11,8 @@ export enum EventTypeEnum {
     SceneTransition = 'scene_transition',
     Choice = 'choice',
     MultiChoice = "multi_choice",
+    ShowWebLink = 'show_weblink',
+    HideWebLink = 'hide_weblink',
     PlaySound = 'play_sound',
     ClearSound = 'clear_sound',
 }
@@ -106,6 +108,18 @@ export type MultiChoice = {
     point?: number // 選択肢のポイント(スコア計算用)
 };
 
+// ウェブリンク表示イベント
+type ShowWebLinkEvent = {
+    event: EventTypeEnum.ShowWebLink,
+    url: string,
+    text?: string, // リンクテキスト(デフォルトはurl)
+    target?: string // デフォルトは"_blank"
+};
+
+type HideWebLinkEvent = {
+    event: EventTypeEnum.HideWebLink
+};
+
 type PlaySoundEvent = {
     event: EventTypeEnum.PlaySound,
     key: string,
@@ -130,6 +144,8 @@ export type Timeline = (
     SceneTransitionEvent |
     ChoiceEvent |
     MultiChoiceEvent |
+    ShowWebLinkEvent |
+    HideWebLinkEvent |
     PlaySoundEvent |
     ClearSoundEvent
 )[];

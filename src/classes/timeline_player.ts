@@ -11,6 +11,9 @@ export class TimelinePlayer {
     private timeline?: Timeline;
     private timeline_index = 0;
 
+    private weblink_box: Phaser.GameObjects.Rectangle | undefined;
+    private weblink_text: Phaser.GameObjects.Text | undefined;
+
     private typing_timer: Phaser.Time.TimerEvent | undefined;  // タイマーを保存するプロパティ
 
     constructor(private scene: Phaser.Scene, private message_dialog: MessageDialog, private text_style: Phaser.Types.GameObjects.Text.TextStyle = {}) {
@@ -311,6 +314,96 @@ export class TimelinePlayer {
         this.ui_layer.add(finishText);
     }
 
+    private showWebLink(url: string, text: string | undefined, target: string | undefined = '_blank') {
+        // 既存のWebリンクボックスがあれば削除
+        this.hideWebLink();
+
+        const { width, height } = this.scene.game.canvas;
+        const box_x = width / 2;
+        const box_y = height / 2;
+
+        // パディング設定
+        const padding_horizontal = 30;
+        const padding_vertical = 20;
+        const max_width = width - 100;  // 画面幅から余裕を取る
+
+        // リンクテキストを作成（サイズ計測用）
+        const display_text = text || url;
+        const temp_text = new Phaser.GameObjects.Text(
+            this.scene,
+            0,
+            0,
+            display_text,
+            { fontSize: '16px', color: '#00ccff', wordWrap: { width: max_width }, ...this.text_style }
+        );
+
+        // テキストサイズを取得
+        const text_bounds = temp_text.getBounds();
+        const text_width = text_bounds.width;
+        const text_height = text_bounds.height;
+
+        // ボックスサイズを計算（テキストサイズ + パディング）
+        let box_width = Math.min(text_width + padding_horizontal * 2, max_width);
+        const box_height = text_height + padding_vertical * 2;
+
+        // 最小サイズを設定
+        if (box_width < 200) {
+            box_width = 200;
+        }
+
+        // Webリンクボックスを作成（画面ほぼ中央）
+        this.weblink_box = new Phaser.GameObjects.Rectangle(
+            this.scene,
+            box_x,
+            box_y,
+            box_width,
+            box_height,
+            0x1a1a1a
+        ).setStrokeStyle(2, 0x00ccff);
+
+        this.weblink_box.setInteractive({ useHandCursor: true });
+
+        // ホバーエフェクト
+        this.weblink_box.on('pointerover', () => {
+            this.weblink_box?.setFillStyle(0x333333);
+        });
+        this.weblink_box.on('pointerout', () => {
+            this.weblink_box?.setFillStyle(0x1a1a1a);
+        });
+
+        // クリック時にリンクを開く
+        this.weblink_box.on('pointerdown', () => {
+            window.open(url, target);
+        });
+
+        this.ui_layer.add(this.weblink_box);
+
+        // リンクテキストを配置（テンポラリテキストは削除）
+        temp_text.destroy();
+
+        this.weblink_text = new Phaser.GameObjects.Text(
+            this.scene,
+            box_x,
+            box_y,
+            display_text,
+            { fontSize: '16px', color: '#00ccff', wordWrap: { width: box_width - padding_horizontal * 2 }, ...this.text_style }
+        ).setOrigin(0.5);
+
+        this.ui_layer.add(this.weblink_text);
+    }
+
+    private hideWebLink() {
+        // Webリンクボックスを削除
+        if (this.weblink_box) {
+            this.weblink_box.destroy();
+            this.weblink_box = undefined;
+        }
+        if (this.weblink_text) {
+            this.weblink_text.destroy();
+            this.weblink_text = undefined;
+        }
+    }
+
     // Soundの再生
     private playSound(key: string, loop: boolean) {
         const sound = this.scene.sound.get(key) as Phaser.Sound.BaseSound;
@@ -441,6 +534,16 @@ export class TimelinePlayer {
 
             case EventTypeEnum.MultiChoice:  // 選択肢イベント
                 this.setMultiChoiceButtons(timeline_event.choices, timeline_event.correctKey, timeline_event.incorrectKey, timeline_event.shuffle, timeline_event.minSelect, timeline_event.maxSelect);
+                break;
+
+            case EventTypeEnum.ShowWebLink:  // Webリンク表示イベント
+                this.showWebLink(timeline_event.url, timeline_event.text, timeline_event.target);
+                this.next();  // すぐに次のタイムラインを実行する
+                break;
+
+            case EventTypeEnum.HideWebLink:  // Webリンククリアイベント
+                this.hideWebLink();
+                this.next();  // すぐに次のタイムラインを実行する
                 break;
 
             case EventTypeEnum.PlaySound:  // Sound再生イベント

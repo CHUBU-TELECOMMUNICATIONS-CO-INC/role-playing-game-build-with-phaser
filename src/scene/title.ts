@@ -63,7 +63,7 @@ export class TitleScene extends Phaser.Scene {
             });
         }).then(() => {
             if (is_skipped) return;  // スキップ済みなら中断
-            // フェードイン完了後、クリックで遷移可能（既にZoneは作成済み）
+            this.scene.start('main', { id: 'start' });
         });
     }
 }
