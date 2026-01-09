@@ -101,13 +101,14 @@ export class MessageDialog extends Phaser.GameObjects.Container {
         this.box.setVisible(true);
         this.text.setVisible(true);
 
+        const chars = [...text];  // 絵文字を正しく分割
         let index = 0;
         const timer = this.scene.time.addEvent({
             delay: delay,
             callback: () => {
-                this.text.setText(text.substring(0, index + 1));
+                this.text.setText(chars.slice(0, index + 1).join(''));
                 index++;
-                if (index >= text.length) {
+                if (index >= chars.length) {
                     timer.destroy();  // タイマーを破棄
                 }
             },
