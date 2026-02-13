@@ -45,14 +45,6 @@ export class TimelinePlayer {
         this.hit_area.on('pointerdown', () => {
             this.next();
         });
-        // hit_area を interactive にした直後に、もし hitAreaDebug があれば破棄して非表示にする
-        const ia = (this.hit_area as any).input;
-        if (ia && ia.hitAreaDebug) {
-            try {
-                ia.hitAreaDebug.destroy();
-            } catch (e) { /* ignore */ }
-            ia.hitAreaDebug = null;
-        }
 
         // hitAreaをUIレイヤーに追加
         this.ui_layer.add(this.hit_area);
