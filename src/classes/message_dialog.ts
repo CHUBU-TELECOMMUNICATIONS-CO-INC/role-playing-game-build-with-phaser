@@ -18,7 +18,7 @@ export class MessageDialog extends Phaser.GameObjects.Container {
 
     private padding: number;
 
-    constructor(public scene: Phaser.Scene, { x, y, width, height, padding = 20, margin = 10, text_style: text_style = {} }: MessageDialogConfig) {
+    constructor(public scene: Phaser.Scene, { x, y, width, height, padding = 20, margin = 0, text_style: text_style = {} }: MessageDialogConfig) {
         // Phaser.GameObjects.Containerのコンストラクタ
         super(scene, 0, 0);
 
@@ -33,17 +33,17 @@ export class MessageDialog extends Phaser.GameObjects.Container {
         };
 
         // 会話テキスト用のTextを作成
-        this.text = new Phaser.GameObjects.Text(this.scene, x - width / 2 + padding, y - height / 2 + padding, '', dialog_box_text_style);
+        this.text = new Phaser.GameObjects.Text(this.scene, x - (width / 2) + padding, y - (height / 2) + padding, '', dialog_box_text_style);
         this.add(this.text);  // Containerへの追加
 
         // 高さ40の白枠付きの黒いRectangleを作成
-        this.actor_name_box = new Phaser.GameObjects.Rectangle(this.scene, x - width / 2, y - height / 2 - margin, 0, 40, 0x000000).setStrokeStyle(1, 0xffffff);
+        this.actor_name_box = new Phaser.GameObjects.Rectangle(this.scene, x - (width / 2), y - (height / 2) - margin, 0, 40, 0x000000).setStrokeStyle(1, 0xffffff);
         this.actor_name_box.setOrigin(0, 1);  // 原点を左下に設定
         this.actor_name_box.setVisible(false);  // 初期状態では非表示
         this.add(this.actor_name_box);  // Containerへの追加
 
         // 名前テキスト用のTextを作成
-        this.actor_name_text = new Phaser.GameObjects.Text(this.scene, x - width / 2 + padding, y - height / 2 - margin - 20, '', text_style);
+        this.actor_name_text = new Phaser.GameObjects.Text(this.scene, x - (width / 2) + padding, y - (height / 2) - margin - 20, '', text_style);
         this.actor_name_text.setOrigin(0, 0.5);  // 原点を左中に設定
         this.actor_name_text.setVisible(false);  // 初期状態では非表示
         this.add(this.actor_name_text);  // Containerへの追加

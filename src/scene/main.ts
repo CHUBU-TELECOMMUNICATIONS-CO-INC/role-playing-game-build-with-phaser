@@ -41,11 +41,11 @@ export class MainScene extends Phaser.Scene {
 
         // DialogBoxのコンフィグ
         const message_dialog_height = 160;
-        const message_dialog_margin = 50;
+        const message_dialog_margin = 20;
         const messaged_dialog_config: MessageDialogConfig = {
-            x: width / 2,
-            y: height - message_dialog_height / 2,
-            width: width - message_dialog_margin * 2,
+            x: (width / 2),
+            y: height - (message_dialog_height / 2),
+            width: width - (message_dialog_margin * 2),
             height: message_dialog_height,
             padding: 10,
             margin: message_dialog_margin,
