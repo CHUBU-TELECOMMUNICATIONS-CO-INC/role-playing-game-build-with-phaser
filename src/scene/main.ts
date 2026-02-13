@@ -31,8 +31,6 @@ export class MainScene extends Phaser.Scene {
         }
         const { width, height } = this.game.canvas;
 
-        this.add.image(0, 0, 'street').setOrigin(0);
-
         // フォントの設定
         const text_style: Phaser.Types.GameObjects.Text.TextStyle = {
             fontFamily: 'Meiryo, sans-serif',
