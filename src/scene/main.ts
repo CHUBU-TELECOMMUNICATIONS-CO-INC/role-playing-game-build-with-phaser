@@ -48,7 +48,7 @@ export class MainScene extends Phaser.Scene {
             width: width - (message_dialog_margin * 2),
             height: message_dialog_height,
             padding: 10,
-            margin: message_dialog_margin,
+            margin: 0,
             text_style: text_style
         };
 
