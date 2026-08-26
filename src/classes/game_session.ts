@@ -49,16 +49,44 @@ function elapsedSinceStart(): number {
     return started_at !== undefined ? Date.now() - started_at : 0;
 }
 
-// 指定URLへJSONをPOST送信する(失敗時はコンソールにエラーを出力するのみでリトライは行わない)
+// リトライ設定(指数バックオフ): 最大3回試行、待機時間は 0.5s → 1s → 2s
+const RETRY_MAX_ATTEMPTS = 3;
+const RETRY_BASE_DELAY_MS = 500;
+
+function sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// 指定URLへJSONをPOST送信する(通信エラー・HTTPエラー応答時は指数バックオフでリトライし、全試行失敗時のみコンソールにエラーを出力する)
 async function postResult(url: string, body: unknown, errorMessage: string): Promise<void> {
-    try {
-        await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body),
-        });
-    } catch (error) {
-        console.error(errorMessage, error);
+    const payload = JSON.stringify(body);
+
+    for (let attempt = 1; attempt <= RETRY_MAX_ATTEMPTS; attempt++) {
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: payload,
+            });
+
+            if (response.ok) {
+                return;
+            }
+
+            throw new Error(`HTTP ${response.status} ${response.statusText}`);
+        } catch (error) {
+            if (attempt >= RETRY_MAX_ATTEMPTS) {
+                console.error(errorMessage, error);
+                return;
+            }
+
+            const delayMs = RETRY_BASE_DELAY_MS * 2 ** (attempt - 1);
+            console.warn(
+                `${errorMessage} (${attempt}/${RETRY_MAX_ATTEMPTS}回目、${delayMs}ms後にリトライします)`,
+                error,
+            );
+            await sleep(delayMs);
+        }
     }
 }
 
