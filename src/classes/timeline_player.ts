@@ -35,6 +35,8 @@ export class TimelinePlayer {
     private weblink_box: Phaser.GameObjects.Rectangle | undefined;
     private weblink_text: Phaser.GameObjects.Text | undefined;
 
+    private sending_indicator: Phaser.GameObjects.Text | undefined; // ゲーム結果送信中インジケータ
+
     private typing_timer: Phaser.Time.TimerEvent | undefined; // タイマーを保存するプロパティ
 
     constructor(
@@ -940,6 +942,29 @@ export class TimelinePlayer {
         }
     }
 
+    // ゲーム結果送信中インジケータを表示し、hitAreaのクリックを無効化する
+    private showSendingIndicator() {
+        this.hit_area.disableInteractive();
+
+        const { width, height } = this.scene.game.canvas;
+        this.sending_indicator = new Phaser.GameObjects.Text(this.scene, width / 2, height / 2, "送信中...", {
+            fontSize: "20px",
+            color: "#ffffff",
+            ...this.text_style,
+        }).setOrigin(0.5);
+
+        this.ui_layer.add(this.sending_indicator);
+    }
+
+    // ゲーム結果送信中インジケータを削除し、hitAreaのクリックを再度有効化する
+    private hideSendingIndicator() {
+        if (this.sending_indicator) {
+            this.sending_indicator.destroy();
+            this.sending_indicator = undefined;
+        }
+        this.hit_area.setInteractive({ useHandCursor: true });
+    }
+
     // Soundの再生
     private playSound(key: string, loop: boolean) {
         const sound = this.scene.sound.get(key) as Phaser.Sound.BaseSound;
@@ -1184,13 +1209,22 @@ export class TimelinePlayer {
                 break;
 
             case EventTypeEnum.SendGameResultWithPhaserWorks: // ゲーム結果送信イベント(結果送信先が設定されていればPhaserWorksへ全データを送信する)
-                sendGameResultWithPhaserWorks(timeline_event.variables);
-                this.next(); // すぐに次のタイムラインを実行する
+                // 送信完了(リトライ含む)を待ってから次のタイムラインへ進む。
+                // 直後にSceneTransitionが続く場合、送信中にシーンが破棄されるとリトライが完遂しないため
+                this.showSendingIndicator();
+                void sendGameResultWithPhaserWorks(timeline_event.variables).then(() => {
+                    this.hideSendingIndicator();
+                    this.next();
+                });
                 break;
 
             case EventTypeEnum.SendGameResultWithPowerAutomate: // ゲーム結果送信イベント(指定URLへPower Automate向け形式でPOST送信する)
-                sendGameResultWithPowerAutomate(timeline_event.url, timeline_event.variables);
-                this.next(); // すぐに次のタイムラインを実行する
+                // 送信完了(リトライ含む)を待ってから次のタイムラインへ進む(理由は上記と同様)
+                this.showSendingIndicator();
+                void sendGameResultWithPowerAutomate(timeline_event.url, timeline_event.variables).then(() => {
+                    this.hideSendingIndicator();
+                    this.next();
+                });
                 break;
 
             case EventTypeEnum.CheckPreferredUsername: // preferredUsername判定イベント
